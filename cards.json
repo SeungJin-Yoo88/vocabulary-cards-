@@ -1,5 +1,18 @@
 [
   {
+    "id": 1739200800000,
+    "word": "unprecedented",
+    "koreanWord": "전례없는",
+    "partOfSpeech": "adj.",
+    "pronunciation": "언프레시덴티드 (강세: un-PREC-e-dent-ed)",
+    "meaning": "과거에 전혀 없었던, 역사적으로 처음 일어나는. 단순히 '새로운' 것을 넘어서 '역사상 유례가 없는' 중대한 사건이나 상황을 강조할 때 사용하는 격식 있는 표현.",
+    "example": "The COVID-19 pandemic created an unprecedented global crisis.\n→ COVID-19 팬데믹은 전례없는 세계적 위기를 초래했다.\n\nThe company achieved unprecedented success in the market.\n→ 그 회사는 시장에서 전례없는 성공을 거뒀다.\n\nWe are witnessing unprecedented changes in technology.\n→ 우리는 기술 분야에서 전례없는 변화를 목격하고 있다.\n\nThe government took unprecedented action to address the issue.\n→ 정부는 그 문제를 해결하기 위해 전례없는 조치를 취했다.",
+    "related": "유의어: unparalleled (비할 데 없는), unmatched (필적할 것 없는), extraordinary (특별한)\n반의어: common (흔한), typical (전형적인), conventional (전통적인)\n파생어: precedent (선례, 전례), precede (선행하다, 앞서다)\n연어: unprecedented crisis, unprecedented success, unprecedented changes, unprecedented action, unprecedented scale, unprecedented level, unprecedented growth",
+    "tips": "어원: un- (부정) + precedent (선례, 전례) + -ed (형용사)\n→ 라틴어 'praecedere' (prae=앞에 + cedere=가다) = '앞서 가다'\n→ precedent = 앞서 일어난 일 = 선례\n→ unprecedented = 선례가 없는 = 전례없는!\n\n기억법: 'president'(대통령)가 아니라 'precedent'(선례)! 'UN-precedented' = 선례가 UN(없는) = 전례없는! 🎯\n\n원어민 팁:\n- 2020년 이후 뉴스에서 가장 많이 등장한 단어 중 하나\n- 격식 있는(formal) 표현으로, 뉴스/공식 발표/학술 논문에서 주로 사용\n- 일상 대화에서는 'never seen before', 'totally new' 등을 더 많이 사용\n- 너무 남발하면 신뢰도 하락 → 정말 역사적인 상황에서만 사용해야 효과적\n\n흔히 혼동하는 단어:\n- unprecedented (전례없는) ← 시간적 개념, '과거에 없었던'\n- unpredictable (예측불가능한) ← 미래 개념, '예측할 수 없는'\n- unparalleled (비할 데 없는) ← 비교 개념, '비교 대상이 없을 정도로 뛰어난'",
+    "favorite": false,
+    "createdAt": 1739200800000
+  },
+  {
     "id": 1739199600000,
     "word": "conspiracy theory",
     "koreanWord": "음모론",
