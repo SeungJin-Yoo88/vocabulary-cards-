@@ -19,11 +19,13 @@ let stats = {
 // DOM 요소
 const cardsGrid = document.getElementById('cardsGrid');
 const emptyState = document.getElementById('emptyState');
-const addCardBtn = document.getElementById('addCardBtn');
-const addCardModal = document.getElementById('addCardModal');
-const closeModal = document.getElementById('closeModal');
-const cancelBtn = document.getElementById('cancelBtn');
-const addCardForm = document.getElementById('addCardForm');
+// 새 카드 추가 UI 제거됨 (Claude Code /vocab-card 스킬 사용)
+// const addCardBtn = document.getElementById('addCardBtn');
+// const addCardModal = document.getElementById('addCardModal');
+// const closeModal = document.getElementById('closeModal');
+// const cancelBtn = document.getElementById('cancelBtn');
+// const addCardForm = document.getElementById('addCardForm');
+// const aiGenerateBtn = document.getElementById('aiGenerateBtn');
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const filterBtns = document.querySelectorAll('.filter-btn');
@@ -32,7 +34,6 @@ const reviewModeSection = document.getElementById('reviewMode');
 const exitReviewBtn = document.getElementById('exitReviewBtn');
 const totalCardsSpan = document.getElementById('totalCards');
 const favoriteCardsSpan = document.getElementById('favoriteCards');
-const aiGenerateBtn = document.getElementById('aiGenerateBtn');
 const manageCategoriesBtn = document.getElementById('manageCategoriesBtn');
 const categoryModal = document.getElementById('categoryModal');
 const closeCategoryModal = document.getElementById('closeCategoryModal');
@@ -60,15 +61,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     registerServiceWorker();
 
     // 이벤트 리스너
-    addCardBtn.addEventListener('click', () => openModal());
-    closeModal.addEventListener('click', () => closeModalFn());
-    cancelBtn.addEventListener('click', () => closeModalFn());
-    addCardForm.addEventListener('submit', handleAddCard);
+    // 새 카드 추가 UI 제거됨
+    // addCardBtn.addEventListener('click', () => openModal());
+    // closeModal.addEventListener('click', () => closeModalFn());
+    // cancelBtn.addEventListener('click', () => closeModalFn());
+    // addCardForm.addEventListener('submit', handleAddCard);
+    // aiGenerateBtn.addEventListener('click', handleAIGenerate);
     searchBtn.addEventListener('click', handleSearch);
     searchInput.addEventListener('input', handleSearch);
     reviewModeBtn.addEventListener('click', startReviewMode);
     exitReviewBtn.addEventListener('click', exitReviewMode);
-    aiGenerateBtn.addEventListener('click', handleAIGenerate);
     manageCategoriesBtn.addEventListener('click', openCategoryModal);
     closeCategoryModal.addEventListener('click', closeCategoryModalFn);
     settingsBtn.addEventListener('click', openSettingsModal);
@@ -87,11 +89,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // 모달 외부 클릭 시 닫기
-    addCardModal.addEventListener('click', (e) => {
-        if (e.target === addCardModal) {
-            closeModalFn();
-        }
-    });
+    // 새 카드 추가 모달 제거됨
+    // addCardModal.addEventListener('click', (e) => {
+    //     if (e.target === addCardModal) {
+    //         closeModalFn();
+    //     }
+    // });
 
     categoryModal.addEventListener('click', (e) => {
         if (e.target === categoryModal) {
