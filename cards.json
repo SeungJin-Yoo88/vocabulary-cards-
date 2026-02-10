@@ -21,5 +21,17 @@
     "tips": "어원: un- (not, 부정) + precedent (선례) + -ed (형용사형)\n→ '선례가 없는' → 전례없는!\n\n기억법: \"precedent(선례)가 Un(없어)\" → 전례없는! 📜❌\n\n원어민 팁:\n- 뉴스, 정치, 비즈니스에서 매우 자주 사용되는 고급 어휘\n- 정말 역사적이고 중요한 순간에 사용하면 임팩트 있음\n- 과장할 때도 쓰임: \"This is unprecedented!\" (완전 처음이야!)\n- 하지만 너무 자주 쓰면 과장으로 들릴 수 있으니 주의\n\n사용 주의사항:\n- 단순히 \"새롭다\"가 아니라 \"역사상 처음\"이라는 강한 의미\n- 격식 있는 상황에 적합 (formal)\n- \"unprecedented times\" (전례없는 시기)는 COVID-19 팬데믹 때 매우 자주 쓰였던 표현",
     "favorite": false,
     "createdAt": 1739195400000
+  },
+  {
+    "id": 1739196800000,
+    "word": "conspiracy theory",
+    "partOfSpeech": "n.",
+    "pronunciation": "컨스피러시 씨어리 (강세: con-SPIR-a-cy THE-o-ry)",
+    "meaning": "어떤 사건이나 상황이 강력한 집단이나 조직의 비밀스러운 음모에 의해 일어났다고 믿는 증명되지 않은 이론. 일반적으로 증거가 부족하고 비이성적인 믿음으로 여겨지며, 부정적인 뉘앙스를 가진 표현.",
+    "example": "Many people believe in conspiracy theories about the moon landing.\n→ 많은 사람들이 달 착륙에 대한 음모론을 믿는다.\n\nDon't fall for conspiracy theories you read on social media.\n→ 소셜미디어에서 읽은 음모론에 속지 마세요.\n\nThe documentary debunked several popular conspiracy theories.\n→ 그 다큐멘터리는 여러 유명한 음모론들을 논파했다.\n\nSome conspiracy theories spread faster than actual facts.\n→ 일부 음모론은 실제 사실보다 더 빠르게 퍼진다.",
+    "related": "유의어: unfounded belief (근거 없는 믿음), misinformation (잘못된 정보)\n반의어: verified fact (검증된 사실), scientific consensus (과학적 합의)\n파생어: conspiracy theorist (음모론자), conspire (음모를 꾸미다), conspiracy (음모, 공모)\n연어: spread conspiracy theories, debunk conspiracy theories, popular conspiracy theories, wild conspiracy theories, believe in conspiracy theories",
+    "tips": "어원: conspiracy (con=함께 + spirare=숨쉬다) + theory (이론)\n→ 라틴어 'conspirare'는 '함께 숨을 쉬다'는 뜻으로, 비밀 회의에서 숨죽이고 음모를 꾸미는 모습에서 유래!\n\n기억법: '비밀 회의에서 숨 죽이고(conspire) 만든 이론(theory)' = 음모론! 🤫\n\n원어민 팁:\n- 2020년 이후 COVID-19, 백신, 선거 관련으로 사용 빈도 폭증\n- 'conspiracy theory'라고 부르는 순간, 이미 '믿을 수 없는 헛소리'라는 부정적 의미 포함\n- 누군가를 'conspiracy theorist'라고 부르는 건 조롱하는 표현\n- 하지만 학술적/중립적 맥락에서는 객관적으로도 사용 가능\n\n사용 주의사항:\n- 'conspiracy' 단독으로는 '실제 음모'를 의미\n- 'conspiracy theory'는 '증명되지 않은 음모에 대한 믿음'\n- 과거에 음모론으로 치부되었다가 사실로 밝혀진 사건들도 있음 (워터게이트 등)\n- 하지만 일반적으로는 강한 부정적 뉘앙스를 가진 표현임",
+    "favorite": false,
+    "createdAt": 1739196800000
   }
 ]
