@@ -1336,7 +1336,7 @@ header h1 {
 .card-popup-content {
     width: 100%;
     max-width: 500px;
-    height: 600px;
+    height: 500px;
     perspective: 1000px;
     transform: scale(0.8);
     transition: transform 0.3s ease;
@@ -1369,31 +1369,47 @@ header h1 {
     background: rgba(255, 255, 255, 1);
 }
 
-/* 팝업 내 카드는 큰 크기 */
+/* 팝업 내 카드는 중간 크기 (원래 크기) */
 .card-popup .flashcard {
     height: 100%;
 }
 
 .card-popup .flashcard-front,
 .card-popup .flashcard-back {
-    padding: 30px;
+    padding: 25px;
     border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.card-popup .flashcard-front {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.card-popup .flashcard-back {
+    background: var(--bg-card);
+    transform: rotateY(180deg);
+    overflow-y: auto;
+    color: var(--text-primary);
 }
 
 .card-popup .word-display {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-    gap: 8px;
+    font-size: 2rem;
+    margin-bottom: 12px;
+    gap: 6px;
 }
 
 .card-popup .word-display .word {
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
 }
 
 .card-popup .word-display .part-of-speech {
-    font-size: 0.95rem;
-    padding: 4px 14px;
-    border-radius: 20px;
+    font-size: 0.85rem;
+    padding: 3px 12px;
+    border-radius: 16px;
 }
 
 .card-popup .card-actions {
@@ -1404,10 +1420,10 @@ header h1 {
 
 .card-popup .favorite-btn,
 .card-popup .delete-btn {
-    padding: 8px 12px;
-    font-size: 1.2rem;
-    min-width: 36px;
-    min-height: 36px;
+    padding: 6px 10px;
+    font-size: 1.1rem;
+    min-width: 32px;
+    min-height: 32px;
 }
 
 /* Modal */
