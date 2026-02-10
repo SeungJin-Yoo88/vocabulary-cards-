@@ -79,11 +79,13 @@ body {
     padding: 15px 20px;
     background: var(--bg-primary);
     color: white;
+    position: relative;
 }
 
 .home-header h1 {
     font-size: 1.5rem;
     margin: 0;
+    flex: 1;
 }
 
 /* 카드 스와이퍼 */
@@ -148,12 +150,13 @@ body {
 }
 
 .home-actions {
-    padding: 15px 20px 20px 20px;
+    padding: 15px 20px;
     background: var(--bg-primary);
     display: flex;
     gap: 10px;
     justify-content: center;
     flex-shrink: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .action-btn {
@@ -337,32 +340,27 @@ header {
     position: relative;
 }
 
-.theme-toggle-nav {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--bg-card);
-    border: 2px solid var(--border-color);
-    padding: 8px;
-    border-radius: 50%;
+.theme-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 12px;
+    border-radius: 25px;
     cursor: pointer;
     font-size: 1.2rem;
     transition: all 0.3s;
-    width: 44px;
-    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 101;
-    box-shadow: 0 2px 8px var(--shadow);
 }
 
-.theme-toggle-nav:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px var(--shadow);
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
 }
 
-.theme-toggle-nav:active {
+.theme-toggle:active {
     transform: scale(0.95);
 }
 
