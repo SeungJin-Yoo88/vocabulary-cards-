@@ -22,177 +22,188 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <button id="themeToggle" class="theme-toggle" title="다크모드 전환">🌙</button>
-            <h1>📚 나만의 영어 단어장</h1>
-            <p class="subtitle">플래시카드로 영어 단어를 마스터하세요!</p>
-        </header>
-
-        <!-- Controls -->
-        <div class="controls">
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="단어 검색...">
-                <button id="searchBtn">🔍</button>
+    <!-- 모바일 퍼스트: 탭 네비게이션 -->
+    <div class="mobile-app">
+        <!-- Tab 1: 홈 (카드 스와이프) -->
+        <section id="homeTab" class="tab-content active">
+            <div class="home-header">
+                <h1>📚 단어장</h1>
+                <button id="themeToggle" class="theme-toggle" title="다크모드 전환">🌙</button>
             </div>
 
-            <!-- Filter Section -->
-            <div class="filter-section">
-                <div class="filter-buttons">
-                    <button class="filter-btn active" data-filter="all">전체</button>
-                    <button class="filter-btn" data-filter="favorites">⭐ 즐겨찾기</button>
-                    <button class="filter-btn" data-filter="due">📅 오늘 복습</button>
-                    <div id="categoryFilters" class="category-filters"></div>
+            <!-- 카드 스와이프 영역 -->
+            <div id="cardSwiper" class="card-swiper">
+                <div class="swiper-progress">
+                    <span id="currentCardIndex">1</span> / <span id="totalCardCount">0</span>
+                </div>
+
+                <div id="swiperContainer" class="swiper-container">
+                    <!-- 카드가 동적으로 추가됨 -->
+                </div>
+
+                <div class="swiper-hint">
+                    👈 스와이프하여 카드 넘기기 👉
+                </div>
+
+                <!-- 모바일 네비게이션 버튼 -->
+                <div class="swiper-nav-buttons">
+                    <button id="prevCardBtnMobile" class="nav-btn">←</button>
+                    <button id="nextCardBtnMobile" class="nav-btn">→</button>
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <button id="manageCategoriesBtn" class="manage-categories-btn">🏷️ 카테고리</button>
-                <button id="trashBtn" class="trash-btn">🗑️ 휴지통</button>
-                <button id="settingsBtn" class="settings-btn">⚙️ 설정</button>
-                <button id="reviewModeBtn" class="review-btn">🎯 복습 모드</button>
-                <!-- 새 카드는 Claude Code /vocab-card 스킬로만 추가 -->
+            <!-- 빈 상태 -->
+            <div id="emptyState" class="empty-state hidden">
+                <p>🎯 아직 카드가 없습니다</p>
+                <p>검색 탭에서 카드를 추가해보세요!</p>
             </div>
-        </div>
 
-        <!-- Stats Dashboard -->
-        <div class="stats-dashboard">
-            <div class="stat-card">
-                <div class="stat-icon">📚</div>
-                <div class="stat-info">
-                    <div class="stat-label">전체 단어</div>
-                    <div class="stat-number" id="totalCards">0</div>
-                </div>
+            <!-- 복습 모드 버튼 -->
+            <div class="home-actions">
+                <button id="reviewModeBtn" class="review-btn">🎯 복습 모드 시작</button>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon">🎯</div>
-                <div class="stat-info">
-                    <div class="stat-label">복습 완료</div>
-                    <div class="stat-number" id="reviewedCards">0</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">✅</div>
-                <div class="stat-info">
-                    <div class="stat-label">마스터</div>
-                    <div class="stat-number" id="masteredCards">0</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">📅</div>
-                <div class="stat-info">
-                    <div class="stat-label">오늘 복습</div>
-                    <div class="stat-number" id="dueCards">0</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">🔥</div>
-                <div class="stat-info">
-                    <div class="stat-label">연속 학습</div>
-                    <div class="stat-number" id="streakDays">0일</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">⭐</div>
-                <div class="stat-info">
-                    <div class="stat-label">즐겨찾기</div>
-                    <div class="stat-number" id="favoriteCards">0</div>
-                </div>
-            </div>
-        </div>
+        </section>
 
-        <!-- Review Mode -->
-        <div id="reviewMode" class="review-mode hidden">
-            <div class="review-header">
-                <h2>🎯 복습 모드</h2>
-                <button id="exitReviewBtn">나가기</button>
+        <!-- Tab 2: 검색 & 카드 관리 -->
+        <section id="searchTab" class="tab-content">
+            <div class="tab-header">
+                <h2>🔍 검색 & 관리</h2>
             </div>
-            <div class="review-progress">
-                <span id="reviewProgress">1 / 10</span>
-            </div>
-            <div id="reviewCardContainer"></div>
-            <div class="review-rating">
-                <p>이 단어를 기억하는 게 얼마나 어려웠나요?</p>
-                <div class="rating-buttons">
-                    <button class="rating-btn" data-rating="1">❌ 못 외웠음 (1일 후)</button>
-                    <button class="rating-btn" data-rating="3">😅 어려움 (3일 후)</button>
-                    <button class="rating-btn" data-rating="4">😊 보통 (7일 후)</button>
-                    <button class="rating-btn" data-rating="5">✅ 쉬움 (14일 후)</button>
+
+            <div class="search-section">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="단어 검색...">
+                    <button id="searchBtn">🔍</button>
                 </div>
-            </div>
-            <div class="review-controls">
-                <button id="prevCardBtn">← 이전</button>
-                <button id="nextCardBtn">다음 (평가 안함) →</button>
-                <button id="shuffleBtn">🔀 섞기</button>
-            </div>
-        </div>
 
-        <!-- Cards Grid -->
-        <div id="cardsGrid" class="cards-grid"></div>
-
-        <!-- Empty State -->
-        <div id="emptyState" class="empty-state hidden">
-            <p>아직 카드가 없습니다.</p>
-            <p>➕ 버튼을 눌러 첫 번째 카드를 추가해보세요!</p>
-        </div>
-    </div>
-
-    <!-- Add Card Modal -->
-    <!-- 카드 추가 모달 제거됨: Claude Code /vocab-card 스킬 사용 -->
-    <!--
-    <div id="addCardModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>새 단어 카드 추가</h2>
-                <button class="close-btn" id="closeModal">&times;</button>
-            </div>
-            <form id="addCardForm">
-                <div class="form-group">
-                    <label>영어 단어 또는 한글 단어 *</label>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="wordInput" required placeholder="예: conspiracy theory 또는 음모론">
-                        <button type="button" id="aiGenerateBtn" class="ai-btn" title="Claude Code 스킬로 카드를 생성합니다 (완전 무료!)">
-                            🤖 Claude로 생성
-                        </button>
+                <!-- Filter Section -->
+                <div class="filter-section">
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">전체</button>
+                        <button class="filter-btn" data-filter="favorites">⭐ 즐겨찾기</button>
+                        <button class="filter-btn" data-filter="due">📅 오늘 복습</button>
+                        <div id="categoryFilters" class="category-filters"></div>
                     </div>
-                    <small style="color: #666; font-size: 0.85rem; margin-top: 5px; display: block;">
-                        💡 팁: 단어 입력 → Claude로 생성 버튼 → Claude Code에 명령어 붙여넣기!
-                    </small>
                 </div>
-                <div class="form-group">
-                    <label>발음</label>
-                    <input type="text" id="pronunciationInput" placeholder="예: 컨스피러시 씨어리">
+            </div>
+
+            <!-- Cards Grid -->
+            <div id="cardsGrid" class="cards-grid"></div>
+        </section>
+
+        <!-- Tab 3: 통계 -->
+        <section id="statsTab" class="tab-content">
+            <div class="tab-header">
+                <h2>📊 학습 통계</h2>
+            </div>
+
+            <!-- Stats Dashboard -->
+            <div class="stats-dashboard">
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-info">
+                        <div class="stat-label">전체 단어</div>
+                        <div class="stat-number" id="totalCards">0</div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>의미 *</label>
-                    <textarea id="meaningInput" required placeholder="주요 의미를 입력하세요"></textarea>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <div class="stat-label">복습 완료</div>
+                        <div class="stat-number" id="reviewedCards">0</div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>예문</label>
-                    <textarea id="exampleInput" placeholder="예문과 해석을 입력하세요"></textarea>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <div class="stat-label">마스터</div>
+                        <div class="stat-number" id="masteredCards">0</div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>관련 단어</label>
-                    <input type="text" id="relatedInput" placeholder="유의어, 반의어 등">
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-info">
+                        <div class="stat-label">오늘 복습</div>
+                        <div class="stat-number" id="dueCards">0</div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>팁 & 기억법</label>
-                    <textarea id="tipsInput" placeholder="어원, 기억법, 사용 팁 등"></textarea>
+                <div class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-info">
+                        <div class="stat-label">연속 학습</div>
+                        <div class="stat-number" id="streakDays">0일</div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>카테고리 (복수 선택 가능)</label>
-                    <div id="categoryCheckboxes" class="category-checkboxes"></div>
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-info">
+                        <div class="stat-label">즐겨찾기</div>
+                        <div class="stat-number" id="favoriteCards">0</div>
+                    </div>
                 </div>
-                <div class="form-actions">
-                    <button type="button" class="cancel-btn" id="cancelBtn">취소</button>
-                    <button type="submit" class="submit-btn">카드 추가</button>
-                </div>
-            </form>
+            </div>
+        </section>
+
+        <!-- Tab 4: 설정 -->
+        <section id="settingsTab" class="tab-content">
+            <div class="tab-header">
+                <h2>⚙️ 설정</h2>
+            </div>
+
+            <div class="settings-container">
+                <button id="manageCategoriesBtn" class="settings-btn-large">🏷️ 카테고리 관리</button>
+                <button id="trashBtn" class="settings-btn-large">🗑️ 휴지통</button>
+                <button id="settingsBtn" class="settings-btn-large">💾 백업 & 복원</button>
+            </div>
+        </section>
+
+        <!-- 하단 탭 네비게이션 -->
+        <nav class="bottom-tab-nav">
+            <button class="tab-btn active" data-tab="homeTab">
+                <span class="tab-icon">🏠</span>
+                <span class="tab-label">홈</span>
+            </button>
+            <button class="tab-btn" data-tab="searchTab">
+                <span class="tab-icon">📚</span>
+                <span class="tab-label">카드</span>
+            </button>
+            <button class="tab-btn" data-tab="statsTab">
+                <span class="tab-icon">📊</span>
+                <span class="tab-label">통계</span>
+            </button>
+            <button class="tab-btn" data-tab="settingsTab">
+                <span class="tab-icon">⚙️</span>
+                <span class="tab-label">설정</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Review Mode (전체 화면 오버레이) -->
+    <div id="reviewMode" class="review-mode hidden">
+        <div class="review-header">
+            <h2>🎯 복습 모드</h2>
+            <button id="exitReviewBtn">나가기</button>
+        </div>
+        <div class="review-progress">
+            <span id="reviewProgress">1 / 10</span>
+        </div>
+        <div id="reviewCardContainer"></div>
+        <div class="review-rating">
+            <p>이 단어를 기억하는 게 얼마나 어려웠나요?</p>
+            <div class="rating-buttons">
+                <button class="rating-btn" data-rating="1">❌ 못 외웠음</button>
+                <button class="rating-btn" data-rating="3">😅 어려움</button>
+                <button class="rating-btn" data-rating="4">😊 보통</button>
+                <button class="rating-btn" data-rating="5">✅ 쉬움</button>
+            </div>
+        </div>
+        <div class="review-controls">
+            <button id="prevCardBtn">← 이전</button>
+            <button id="nextCardBtn">다음 →</button>
+            <button id="shuffleBtn">🔀 섞기</button>
         </div>
     </div>
-    -->
+
 
     <!-- Settings Modal -->
     <div id="settingsModal" class="modal hidden">

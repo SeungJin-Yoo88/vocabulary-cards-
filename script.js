@@ -16,6 +16,14 @@ let stats = {
     lastStudyDate: null
 };
 
+// 스와이프 모드용 변수
+let currentSwipeIndex = 0;
+let touchStartX = 0;
+let touchStartY = 0;
+let touchCurrentX = 0;
+let touchCurrentY = 0;
+let isSwiping = false;
+
 // DOM 요소
 const cardsGrid = document.getElementById('cardsGrid');
 const emptyState = document.getElementById('emptyState');
@@ -87,6 +95,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderCards();
         });
     });
+
+    // 탭 네비게이션 초기화
+    initTabNavigation();
+
+    // 스와이프 기능 초기화
+    initSwiper();
 
     // 모달 외부 클릭 시 닫기
     // 새 카드 추가 모달 제거됨
@@ -694,6 +708,11 @@ function renderCards(searchTerm = '') {
         const cardElement = createCardElement(card);
         cardsGrid.appendChild(cardElement);
     });
+
+    // 스와이퍼도 업데이트
+    if (typeof renderSwiper === 'function') {
+        renderSwiper();
+    }
 }
 
 // 카드 요소 생성
@@ -1191,3 +1210,317 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// ==================== 모바일 퍼스트 기능 ====================
+
+// 탭 네비게이션 초기화
+function initTabNavigation() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.dataset.tab;
+
+            // 모든 탭 비활성화
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+
+            // 선택한 탭 활성화
+            btn.classList.add('active');
+            document.getElementById(targetTab).classList.add('active');
+
+            // 홈 탭이면 스와이퍼 업데이트
+            if (targetTab === 'homeTab') {
+                renderSwiper();
+            }
+        });
+    });
+}
+
+// 스와이퍼 초기화
+function initSwiper() {
+    const swiperContainer = document.getElementById('swiperContainer');
+    const prevBtn = document.getElementById('prevCardBtnMobile');
+    const nextBtn = document.getElementById('nextCardBtnMobile');
+
+    if (!swiperContainer) return;
+
+    // 터치 이벤트 (모바일)
+    swiperContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
+    swiperContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+    swiperContainer.addEventListener('touchend', handleTouchEnd);
+
+    // 마우스 이벤트 (PC)
+    swiperContainer.addEventListener('mousedown', handleMouseDown);
+    swiperContainer.addEventListener('mousemove', handleMouseMove);
+    swiperContainer.addEventListener('mouseup', handleMouseUp);
+    swiperContainer.addEventListener('mouseleave', handleMouseUp);
+
+    // 버튼 이벤트
+    if (prevBtn) prevBtn.addEventListener('click', () => navigateCard(-1));
+    if (nextBtn) nextBtn.addEventListener('click', () => navigateCard(1));
+
+    // 키보드 이벤트 (PC)
+    document.addEventListener('keydown', (e) => {
+        if (document.getElementById('homeTab').classList.contains('active')) {
+            if (e.key === 'ArrowLeft') navigateCard(-1);
+            if (e.key === 'ArrowRight') navigateCard(1);
+            if (e.key === ' ') {
+                e.preventDefault();
+                const currentCard = swiperContainer.querySelector('.swipe-card');
+                if (currentCard) currentCard.click();
+            }
+        }
+    });
+
+    // 초기 렌더링
+    renderSwiper();
+}
+
+// 스와이퍼 렌더링
+function renderSwiper() {
+    const swiperContainer = document.getElementById('swiperContainer');
+    const emptyState = document.getElementById('emptyState');
+    const currentIndexSpan = document.getElementById('currentCardIndex');
+    const totalCountSpan = document.getElementById('totalCardCount');
+
+    if (!swiperContainer) return;
+
+    const filteredCards = getFilteredCards();
+
+    if (filteredCards.length === 0) {
+        swiperContainer.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        totalCountSpan.textContent = '0';
+        return;
+    }
+
+    emptyState.classList.add('hidden');
+
+    // 인덱스 범위 체크
+    if (currentSwipeIndex >= filteredCards.length) {
+        currentSwipeIndex = 0;
+    }
+    if (currentSwipeIndex < 0) {
+        currentSwipeIndex = filteredCards.length - 1;
+    }
+
+    const card = filteredCards[currentSwipeIndex];
+
+    // 진행도 업데이트
+    currentIndexSpan.textContent = currentSwipeIndex + 1;
+    totalCountSpan.textContent = filteredCards.length;
+
+    // 카드 렌더링
+    swiperContainer.innerHTML = createSwipeCard(card);
+
+    // 카드 클릭으로 뒤집기
+    const cardElement = swiperContainer.querySelector('.flashcard');
+    if (cardElement) {
+        cardElement.addEventListener('click', (e) => {
+            if (!e.target.closest('.favorite-btn') && !e.target.closest('.delete-btn')) {
+                cardElement.classList.toggle('flipped');
+            }
+        });
+    }
+}
+
+// 스와이프 카드 HTML 생성
+function createSwipeCard(card) {
+    const categoryBadges = card.categories && card.categories.length > 0
+        ? card.categories.map(catName => {
+            const cat = categories.find(c => c.name === catName);
+            return cat ? `<span style="background: ${cat.color}; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; margin-right: 5px;">${cat.icon} ${cat.name}</span>` : '';
+        }).join('')
+        : '';
+
+    return `
+        <div class="flashcard swipe-card">
+            <div class="flashcard-inner">
+                <div class="flashcard-front">
+                    <div class="card-actions">
+                        <button class="favorite-btn ${card.isFavorite ? 'active' : ''}" onclick="toggleFavorite(${card.id}); event.stopPropagation();">
+                            ${card.isFavorite ? '⭐' : '☆'}
+                        </button>
+                        <button class="delete-btn" onclick="deleteCard(${card.id}); event.stopPropagation();">🗑️</button>
+                    </div>
+                    <div class="word-display">
+                        <div class="word">${card.word}</div>
+                        ${card.partOfSpeech ? `<div class="part-of-speech">${card.partOfSpeech}</div>` : ''}
+                    </div>
+                    ${card.pronunciation ? `<div class="pronunciation">[${card.pronunciation}]</div>` : ''}
+                    <button class="speaker-btn" onclick="speakWord('${card.word}'); event.stopPropagation();">🔊</button>
+                    <div class="flip-hint">카드를 클릭하여 뒷면 보기</div>
+                </div>
+                <div class="flashcard-back" onclick="event.stopPropagation();">
+                    ${card.koreanWord ? `<div class="korean-word-display">${card.koreanWord}</div>` : ''}
+                    <div class="card-content">
+                        <h3>📖 의미</h3>
+                        <p>${card.meaning}</p>
+                        ${card.example ? `<h3>💬 예문</h3><p>${card.example}</p>` : ''}
+                        ${card.relatedWords ? `<h3>🔗 관련 단어</h3><p>${card.relatedWords}</p>` : ''}
+                        ${card.tips ? `<h3>💡 팁 & 기억법</h3><p>${card.tips}</p>` : ''}
+                        ${categoryBadges ? `<div style="margin-top: 20px;">${categoryBadges}</div>` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// 카드 네비게이션
+function navigateCard(direction) {
+    const filteredCards = getFilteredCards();
+    if (filteredCards.length === 0) return;
+
+    currentSwipeIndex += direction;
+
+    // 순환 네비게이션
+    if (currentSwipeIndex >= filteredCards.length) {
+        currentSwipeIndex = 0;
+    }
+    if (currentSwipeIndex < 0) {
+        currentSwipeIndex = filteredCards.length - 1;
+    }
+
+    renderSwiper();
+}
+
+// 터치 이벤트 핸들러
+function handleTouchStart(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    isSwiping = true;
+}
+
+function handleTouchMove(e) {
+    if (!isSwiping) return;
+
+    touchCurrentX = e.touches[0].clientX;
+    touchCurrentY = e.touches[0].clientY;
+
+    const diffX = touchCurrentX - touchStartX;
+    const diffY = touchCurrentY - touchStartY;
+
+    // 수평 스와이프가 수직 스와이프보다 크면
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+        e.preventDefault(); // 세로 스크롤 방지
+
+        const card = e.currentTarget.querySelector('.swipe-card');
+        if (card) {
+            const rotation = diffX / 20;
+            card.style.transform = `translateX(${diffX}px) rotate(${rotation}deg)`;
+            card.style.transition = 'none';
+        }
+    }
+}
+
+function handleTouchEnd(e) {
+    if (!isSwiping) return;
+    isSwiping = false;
+
+    const diffX = touchCurrentX - touchStartX;
+    const card = e.currentTarget.querySelector('.swipe-card');
+
+    if (card) {
+        // 스와이프 거리가 충분하면 카드 넘기기
+        if (Math.abs(diffX) > 100) {
+            if (diffX > 0) {
+                // 오른쪽 스와이프: 다음 카드
+                navigateCard(1);
+            } else {
+                // 왼쪽 스와이프: 이전 카드
+                navigateCard(-1);
+            }
+        } else {
+            // 원위치
+            card.style.transform = '';
+            card.style.transition = 'transform 0.3s ease';
+        }
+    }
+
+    touchStartX = 0;
+    touchCurrentX = 0;
+}
+
+// 마우스 이벤트 핸들러 (PC 드래그)
+function handleMouseDown(e) {
+    touchStartX = e.clientX;
+    touchStartY = e.clientY;
+    isSwiping = true;
+    e.currentTarget.style.cursor = 'grabbing';
+}
+
+function handleMouseMove(e) {
+    if (!isSwiping) return;
+
+    touchCurrentX = e.clientX;
+    touchCurrentY = e.clientY;
+
+    const diffX = touchCurrentX - touchStartX;
+    const diffY = touchCurrentY - touchStartY;
+
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+        const card = e.currentTarget.querySelector('.swipe-card');
+        if (card) {
+            const rotation = diffX / 20;
+            card.style.transform = `translateX(${diffX}px) rotate(${rotation}deg)`;
+            card.style.transition = 'none';
+        }
+    }
+}
+
+function handleMouseUp(e) {
+    if (!isSwiping) return;
+    isSwiping = false;
+
+    e.currentTarget.style.cursor = 'grab';
+
+    const diffX = touchCurrentX - touchStartX;
+    const card = e.currentTarget.querySelector('.swipe-card');
+
+    if (card) {
+        if (Math.abs(diffX) > 100) {
+            if (diffX > 0) {
+                navigateCard(1);
+            } else {
+                navigateCard(-1);
+            }
+        } else {
+            card.style.transform = '';
+            card.style.transition = 'transform 0.3s ease';
+        }
+    }
+
+    touchStartX = 0;
+    touchCurrentX = 0;
+}
+
+// 필터된 카드 가져오기 (기존 로직 활용)
+function getFilteredCards() {
+    let filtered = cards.filter(card => {
+        // 검색 필터
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        const matchesSearch = !searchTerm ||
+            card.word.toLowerCase().includes(searchTerm) ||
+            card.meaning.toLowerCase().includes(searchTerm) ||
+            (card.koreanWord && card.koreanWord.toLowerCase().includes(searchTerm));
+
+        // 기타 필터
+        if (currentFilter === 'favorites' && !card.isFavorite) return false;
+        if (currentFilter === 'due' && !isDueForReview(card)) return false;
+
+        // 카테고리 필터
+        if (selectedCategories.length > 0) {
+            const hasCategory = card.categories && card.categories.some(cat =>
+                selectedCategories.includes(cat)
+            );
+            if (!hasCategory) return false;
+        }
+
+        return matchesSearch;
+    });
+
+    return filtered;
+}
