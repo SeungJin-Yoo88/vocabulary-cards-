@@ -67,6 +67,9 @@ body {
 /* 홈 탭 (카드 스와이프) */
 #homeTab {
     padding: 0;
+}
+
+#homeTab.active {
     display: flex;
     flex-direction: column;
     height: 100%;
