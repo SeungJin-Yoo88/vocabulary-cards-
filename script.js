@@ -811,23 +811,43 @@ function speakWord(word, event) {
     // 이전 발음 중지
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(word);
-    utterance.lang = 'en-US';
-    utterance.rate = 0.8; // 느린 속도로 발음
-    utterance.pitch = 1.0;
-    utterance.volume = 1.0;
+    // 음성 재생 함수
+    const speak = () => {
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
 
-    // 발음 시작/종료 이벤트
-    utterance.onstart = () => {
-        console.log('Speaking:', word);
+        // iOS Safari 호환성: 영어 음성 선택
+        const voices = window.speechSynthesis.getVoices();
+        const enVoice = voices.find(voice => voice.lang.startsWith('en'));
+        if (enVoice) {
+            utterance.voice = enVoice;
+        }
+
+        utterance.onstart = () => {
+            console.log('Speaking:', word);
+        };
+
+        utterance.onerror = (e) => {
+            console.error('Speech error:', e);
+            if (e.error !== 'interrupted') {
+                showNotification('⚠️ 발음을 재생할 수 없습니다.');
+            }
+        };
+
+        window.speechSynthesis.speak(utterance);
     };
 
-    utterance.onerror = (e) => {
-        console.error('Speech error:', e);
-        showNotification('⚠️ 발음 중 오류가 발생했습니다.');
-    };
-
-    window.speechSynthesis.speak(utterance);
+    // 모바일 호환성: 음성 로드 대기
+    if (window.speechSynthesis.getVoices().length === 0) {
+        window.speechSynthesis.addEventListener('voiceschanged', speak, { once: true });
+        // 2초 후에도 음성이 없으면 그냥 실행
+        setTimeout(speak, 2000);
+    } else {
+        speak();
+    }
 }
 
 // Service Worker 등록 (PWA)
