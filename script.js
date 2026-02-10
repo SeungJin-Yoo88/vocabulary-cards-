@@ -106,33 +106,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // 로컬 스토리지 + cards.json에서 카드 로드
 async function loadCards() {
-    let jsonCards = [];
-
-    // cards.json 파일에서 로드 (자동 추가된 카드들)
-    try {
-        const response = await fetch('cards.json');
-        if (response.ok) {
-            jsonCards = await response.json();
-        }
-    } catch (error) {
-        console.log('cards.json을 읽을 수 없습니다. localStorage만 사용합니다.');
-    }
-
-    // localStorage에서 로드 (수동으로 추가한 카드들)
-    let localCards = [];
+    // localStorage에서 로드 (사용자가 수정한 카드들)
     const stored = localStorage.getItem('vocabularyCards');
+
     if (stored) {
-        localCards = JSON.parse(stored);
+        // localStorage에 데이터가 있으면 그것만 사용
+        cards = JSON.parse(stored);
+    } else {
+        // localStorage가 비어있으면 cards.json에서 초기 데이터 로드
+        try {
+            const response = await fetch('cards.json');
+            if (response.ok) {
+                cards = await response.json();
+                // 초기 데이터를 localStorage에 저장
+                saveCards();
+            }
+        } catch (error) {
+            console.log('cards.json을 읽을 수 없습니다. 빈 카드 목록으로 시작합니다.');
+            cards = [];
+        }
     }
-
-    // 두 가지 소스 병합 (JSON 카드가 앞에 오도록)
-    // 중복 제거 (같은 단어는 하나만)
-    const allCards = [...jsonCards, ...localCards];
-    const uniqueCards = allCards.filter((card, index, self) =>
-        index === self.findIndex(c => c.word.toLowerCase() === card.word.toLowerCase())
-    );
-
-    cards = uniqueCards;
 }
 
 // 로컬 스토리지에 카드 저장
