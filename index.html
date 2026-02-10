@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나만의 영어 단어장 📚</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>📚 나만의 영어 단어장</h1>
+            <p class="subtitle">플래시카드로 영어 단어를 마스터하세요!</p>
+        </header>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="단어 검색...">
+                <button id="searchBtn">🔍</button>
+            </div>
+
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">전체</button>
+                <button class="filter-btn" data-filter="favorites">⭐ 즐겨찾기</button>
+                <button id="reviewModeBtn" class="review-btn">🎯 복습 모드</button>
+                <button id="addCardBtn" class="add-btn">➕ 새 카드</button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <span>전체 카드: <strong id="totalCards">0</strong></span>
+            <span>즐겨찾기: <strong id="favoriteCards">0</strong></span>
+        </div>
+
+        <!-- Review Mode -->
+        <div id="reviewMode" class="review-mode hidden">
+            <div class="review-header">
+                <h2>🎯 복습 모드</h2>
+                <button id="exitReviewBtn">나가기</button>
+            </div>
+            <div class="review-progress">
+                <span id="reviewProgress">1 / 10</span>
+            </div>
+            <div id="reviewCardContainer"></div>
+            <div class="review-controls">
+                <button id="prevCardBtn">← 이전</button>
+                <button id="nextCardBtn">다음 →</button>
+                <button id="shuffleBtn">🔀 섞기</button>
+            </div>
+        </div>
+
+        <!-- Cards Grid -->
+        <div id="cardsGrid" class="cards-grid"></div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state hidden">
+            <p>아직 카드가 없습니다.</p>
+            <p>➕ 버튼을 눌러 첫 번째 카드를 추가해보세요!</p>
+        </div>
+    </div>
+
+    <!-- Add Card Modal -->
+    <div id="addCardModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>새 단어 카드 추가</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <form id="addCardForm">
+                <div class="form-group">
+                    <label>영어 단어 *</label>
+                    <input type="text" id="wordInput" required placeholder="예: conspiracy theory">
+                </div>
+                <div class="form-group">
+                    <label>발음</label>
+                    <input type="text" id="pronunciationInput" placeholder="예: 컨스피러시 씨어리">
+                </div>
+                <div class="form-group">
+                    <label>의미 *</label>
+                    <textarea id="meaningInput" required placeholder="주요 의미를 입력하세요"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>예문</label>
+                    <textarea id="exampleInput" placeholder="예문과 해석을 입력하세요"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>관련 단어</label>
+                    <input type="text" id="relatedInput" placeholder="유의어, 반의어 등">
+                </div>
+                <div class="form-group">
+                    <label>팁 & 기억법</label>
+                    <textarea id="tipsInput" placeholder="어원, 기억법, 사용 팁 등"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancelBtn">취소</button>
+                    <button type="submit" class="submit-btn">카드 추가</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
