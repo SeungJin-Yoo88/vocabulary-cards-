@@ -892,41 +892,19 @@ function renderTrashCards() {
     trashedCards.forEach(card => {
         const item = document.createElement('div');
         item.className = 'trash-item';
-        item.style.cssText = `
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-        `;
 
         item.innerHTML = `
-            <div>
-                <strong style="font-size: 1.1rem; color: #333;">${card.word}</strong>
-                <p style="color: #666; margin: 5px 0 0 0; font-size: 0.9rem;">${card.meaning.substring(0, 50)}...</p>
+            <div class="trash-card-info">
+                <strong class="trash-card-word">${card.word}</strong>
+                <p class="trash-card-meaning">${card.meaning.substring(0, 60)}...</p>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <button onclick="restoreCard(${card.id})" style="
-                    padding: 8px 16px;
-                    background: #51cf66;
-                    color: white;
-                    border: none;
-                    border-radius: 6px;
-                    cursor: pointer;
-                    font-weight: 600;
-                ">♻️ 복구</button>
-                <button onclick="permanentlyDeleteCard(${card.id})" style="
-                    padding: 8px 16px;
-                    background: #ff6b6b;
-                    color: white;
-                    border: none;
-                    border-radius: 6px;
-                    cursor: pointer;
-                    font-weight: 600;
-                ">❌ 영구 삭제</button>
+            <div class="trash-card-actions">
+                <button onclick="restoreCard(${card.id})" class="trash-restore-btn">
+                    ♻️ 복구
+                </button>
+                <button onclick="permanentlyDeleteCard(${card.id})" class="trash-delete-btn">
+                    ❌ 영구 삭제
+                </button>
             </div>
         `;
 
