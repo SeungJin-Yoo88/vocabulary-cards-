@@ -98,10 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // 샘플 카드 추가 (처음 실행 시)
-    if (cards.length === 0) {
-        addSampleCard();
-    }
+    // cards.json에 기본 카드가 있으므로 샘플 카드 추가 로직 제거됨
 });
 
 // 로컬 스토리지 + cards.json에서 카드 로드 (자동 병합)
@@ -193,22 +190,7 @@ function saveCategories() {
     localStorage.setItem('vocabularyCategories', JSON.stringify(categories));
 }
 
-// 샘플 카드 추가
-function addSampleCard() {
-    const sampleCard = {
-        id: Date.now(),
-        word: 'conspiracy theory',
-        pronunciation: '컨스피러시 씨어리',
-        meaning: '어떤 사건이나 상황이 비밀스러운 집단이나 조직의 계획적인 음모에 의해 일어났다고 믿는 이론이나 설명',
-        example: 'Some people believe in conspiracy theories about the moon landing.\n→ 어떤 사람들은 달 착륙에 대한 음모론을 믿는다.',
-        related: '유의어: alternative explanation, speculation\n관련어: conspiracy theorist (음모론자), debunk (반박하다)',
-        tips: '어원: 라틴어 conspirare (함께 숨을 쉬다)\n기억법: 비밀 모임에서 만들어진 이론!',
-        favorite: false,
-        createdAt: Date.now()
-    };
-    cards.push(sampleCard);
-    saveCards();
-}
+// 샘플 카드 추가 함수 제거됨 (cards.json에 기본 카드 존재)
 
 // 모달 열기
 function openModal() {
