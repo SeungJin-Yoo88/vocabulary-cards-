@@ -596,7 +596,29 @@ header h1 {
 .word-display {
     font-size: 2.5rem;
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.word-display .word {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.word-display .part-of-speech {
+    font-size: 0.95rem;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.25);
+    padding: 4px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    font-style: italic;
+    opacity: 0.95;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .speaker-btn {
@@ -620,9 +642,11 @@ header h1 {
 }
 
 .pronunciation {
-    font-size: 1.2rem;
-    opacity: 0.9;
+    font-size: 1.15rem;
+    opacity: 0.92;
     margin-bottom: 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 400;
 }
 
 .flip-hint {
@@ -633,15 +657,21 @@ header h1 {
 
 .card-content h3 {
     color: #667eea;
-    margin-top: 15px;
-    margin-bottom: 8px;
-    font-size: 1.1rem;
+    margin-top: 18px;
+    margin-bottom: 10px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .card-content p {
-    line-height: 1.6;
+    line-height: 1.75;
     color: var(--text-primary);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    font-size: 1.02rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
 /* Review Mode */

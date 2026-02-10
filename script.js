@@ -711,7 +711,10 @@ function createCardElement(card) {
                     </button>
                     <button class="delete-btn" onclick="deleteCard(${card.id})">🗑️</button>
                 </div>
-                <div class="word-display">${card.word}</div>
+                <div class="word-display">
+                    <span class="word">${card.word}</span>
+                    ${card.partOfSpeech ? `<span class="part-of-speech">${card.partOfSpeech}</span>` : ''}
+                </div>
                 <button class="speaker-btn" onclick="speakWord('${card.word.replace(/'/g, "\\'")}', event)" title="발음 듣기">
                     🔊
                 </button>
