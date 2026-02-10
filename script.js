@@ -108,16 +108,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadCards() {
     // localStorage에서 로드 (사용자가 수정한 카드들)
     const stored = localStorage.getItem('vocabularyCards');
+    const deletedIds = getDeletedCardIds();
 
     if (stored) {
-        // localStorage에 데이터가 있으면 그것만 사용
-        cards = JSON.parse(stored);
+        // localStorage에 데이터가 있으면 그것만 사용 (삭제된 카드 제외)
+        cards = JSON.parse(stored).filter(card => !deletedIds.has(card.id));
     } else {
         // localStorage가 비어있으면 cards.json에서 초기 데이터 로드
         try {
             const response = await fetch('cards.json');
             if (response.ok) {
-                cards = await response.json();
+                const allCards = await response.json();
+                // 삭제된 카드 제외하고 로드
+                cards = allCards.filter(card => !deletedIds.has(card.id));
                 // 초기 데이터를 localStorage에 저장
                 saveCards();
             }
@@ -126,6 +129,19 @@ async function loadCards() {
             cards = [];
         }
     }
+}
+
+// 삭제된 카드 ID 목록 가져오기
+function getDeletedCardIds() {
+    const stored = localStorage.getItem('deletedCardIds');
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+}
+
+// 삭제된 카드 ID 저장
+function saveDeletedCardId(id) {
+    const deletedIds = getDeletedCardIds();
+    deletedIds.add(id);
+    localStorage.setItem('deletedCardIds', JSON.stringify([...deletedIds]));
 }
 
 // 로컬 스토리지에 카드 저장
@@ -542,6 +558,7 @@ function resetAllData() {
     localStorage.removeItem('vocabularyCards');
     localStorage.removeItem('vocabularyCategories');
     localStorage.removeItem('vocabularyStats');
+    localStorage.removeItem('deletedCardIds');
 
     cards = [];
     categories = [
@@ -815,6 +832,7 @@ function toggleFavorite(id) {
 function deleteCard(id) {
     if (confirm('정말로 이 카드를 삭제하시겠습니까?')) {
         cards = cards.filter(c => c.id !== id);
+        saveDeletedCardId(id); // 삭제된 카드 ID 저장
         saveCards();
         renderCards();
         updateStats();
