@@ -728,6 +728,7 @@ function createCardElement(card) {
                     </button>
                     <button class="delete-btn" onclick="deleteCard(${card.id})">🗑️</button>
                 </div>
+                ${card.koreanWord ? `<div class="korean-word-display">${card.koreanWord}</div>` : ''}
                 <div class="card-content">
                     <h3>💡 의미</h3>
                     <p>${card.meaning}</p>
