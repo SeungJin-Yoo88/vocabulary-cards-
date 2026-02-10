@@ -58,9 +58,10 @@
                 <p>검색 탭에서 카드를 추가해보세요!</p>
             </div>
 
-            <!-- 복습 모드 버튼 -->
+            <!-- 액션 버튼들 -->
             <div class="home-actions">
-                <button id="reviewModeBtn" class="review-btn">🎯 복습 모드 시작</button>
+                <button id="shuffleCardsBtn" class="action-btn shuffle-btn">🔀 카드 섞기</button>
+                <button id="reviewModeBtn" class="action-btn review-btn-home">🎯 복습 모드</button>
             </div>
         </section>
 
@@ -176,6 +177,14 @@
                 <span class="tab-label">설정</span>
             </button>
         </nav>
+    </div>
+
+    <!-- 카드 팝업 모달 -->
+    <div id="cardPopup" class="card-popup">
+        <button class="card-popup-close" id="closeCardPopup">✕</button>
+        <div class="card-popup-content" id="cardPopupContent">
+            <!-- 카드가 동적으로 추가됨 -->
+        </div>
     </div>
 
     <!-- Review Mode (전체 화면 오버레이) -->

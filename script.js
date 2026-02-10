@@ -102,6 +102,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 스와이프 기능 초기화
     initSwiper();
 
+    // 셔플 버튼
+    const shuffleCardsBtn = document.getElementById('shuffleCardsBtn');
+    if (shuffleCardsBtn) {
+        shuffleCardsBtn.addEventListener('click', shuffleCards);
+    }
+
+    // 카드 팝업 초기화
+    initCardPopup();
+
     // 모달 외부 클릭 시 닫기
     // 새 카드 추가 모달 제거됨
     // addCardModal.addEventListener('click', (e) => {
@@ -771,15 +780,18 @@ function createCardElement(card) {
         </div>
     `;
 
-    // 카드 뒤집기 이벤트
+    // 카드 클릭 시 팝업 열기
     cardDiv.addEventListener('click', (e) => {
-        // 버튼 클릭 시에는 뒤집기 안함
+        // 버튼 클릭 시에는 팝업 안 열림
         if (e.target.classList.contains('favorite-btn') ||
             e.target.classList.contains('delete-btn') ||
-            e.target.classList.contains('speaker-btn')) {
+            e.target.classList.contains('speaker-btn') ||
+            e.target.closest('.favorite-btn') ||
+            e.target.closest('.delete-btn') ||
+            e.target.closest('.speaker-btn')) {
             return;
         }
-        cardDiv.classList.toggle('flipped');
+        openCardPopup(card.id);
     });
 
     return cardDiv;
@@ -1523,4 +1535,134 @@ function getFilteredCards() {
     });
 
     return filtered;
+}
+
+// 카드 섞기
+function shuffleCards() {
+    const filteredCards = getFilteredCards();
+    if (filteredCards.length === 0) return;
+
+    // 현재 필터된 카드들을 섞음
+    shuffleArray(filteredCards);
+
+    // 첫 카드로 이동
+    currentSwipeIndex = 0;
+    renderSwiper();
+
+    showNotification('🔀 카드가 섞였습니다!');
+
+    // 햅틱 피드백 (지원되는 경우)
+    if (navigator.vibrate) {
+        navigator.vibrate(50);
+    }
+}
+
+// 카드 팝업 초기화
+function initCardPopup() {
+    const cardPopup = document.getElementById('cardPopup');
+    const closeBtn = document.getElementById('closeCardPopup');
+
+    if (!cardPopup || !closeBtn) return;
+
+    // 닫기 버튼
+    closeBtn.addEventListener('click', closeCardPopup);
+
+    // 배경 클릭 시 닫기
+    cardPopup.addEventListener('click', (e) => {
+        if (e.target === cardPopup) {
+            closeCardPopup();
+        }
+    });
+
+    // ESC 키로 닫기
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && cardPopup.classList.contains('active')) {
+            closeCardPopup();
+        }
+    });
+}
+
+// 카드 팝업 열기
+function openCardPopup(cardId) {
+    const card = cards.find(c => c.id === cardId);
+    if (!card) return;
+
+    const cardPopup = document.getElementById('cardPopup');
+    const cardPopupContent = document.getElementById('cardPopupContent');
+
+    // 카드 HTML 생성 (큰 크기)
+    cardPopupContent.innerHTML = createPopupCard(card);
+
+    // 팝업 표시
+    cardPopup.classList.add('active');
+
+    // 카드 클릭으로 뒤집기
+    const cardElement = cardPopupContent.querySelector('.flashcard');
+    if (cardElement) {
+        cardElement.addEventListener('click', (e) => {
+            if (!e.target.closest('.favorite-btn') && !e.target.closest('.delete-btn') && !e.target.closest('.speaker-btn')) {
+                cardElement.classList.toggle('flipped');
+            }
+        });
+    }
+
+    // body 스크롤 방지
+    document.body.style.overflow = 'hidden';
+}
+
+// 카드 팝업 닫기
+function closeCardPopup() {
+    const cardPopup = document.getElementById('cardPopup');
+    cardPopup.classList.remove('active');
+
+    // body 스크롤 복원
+    document.body.style.overflow = '';
+
+    // 애니메이션 후 내용 제거
+    setTimeout(() => {
+        document.getElementById('cardPopupContent').innerHTML = '';
+    }, 300);
+}
+
+// 팝업용 카드 HTML 생성
+function createPopupCard(card) {
+    const categoryBadges = card.categories && card.categories.length > 0
+        ? card.categories.map(catName => {
+            const cat = categories.find(c => c.name === catName);
+            return cat ? `<span style="background: ${cat.color}; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; margin-right: 5px;">${cat.icon} ${cat.name}</span>` : '';
+        }).join('')
+        : '';
+
+    return `
+        <div class="flashcard">
+            <div class="flashcard-inner">
+                <div class="flashcard-front">
+                    <div class="card-actions">
+                        <button class="favorite-btn ${card.isFavorite ? 'active' : ''}" onclick="toggleFavorite(${card.id}); event.stopPropagation();">
+                            ${card.isFavorite ? '⭐' : '☆'}
+                        </button>
+                        <button class="delete-btn" onclick="deleteCard(${card.id}); closeCardPopup(); event.stopPropagation();">🗑️</button>
+                    </div>
+                    <div class="word-display">
+                        <div class="word">${card.word}</div>
+                        ${card.partOfSpeech ? `<div class="part-of-speech">${card.partOfSpeech}</div>` : ''}
+                    </div>
+                    ${card.pronunciation ? `<div class="pronunciation">[${card.pronunciation}]</div>` : ''}
+                    <button class="speaker-btn" onclick="speakWord('${card.word}'); event.stopPropagation();">🔊</button>
+                    <div class="flip-hint">카드를 클릭하여 뒷면 보기</div>
+                </div>
+                <div class="flashcard-back" onclick="event.stopPropagation();">
+                    ${card.koreanWord ? `<div class="korean-word-display">${card.koreanWord}</div>` : ''}
+                    <div class="card-content">
+                        <h3>📖 의미</h3>
+                        <p>${card.meaning}</p>
+                        ${card.example ? `<h3>💬 예문</h3><p>${card.example}</p>` : ''}
+                        ${card.relatedWords ? `<h3>🔗 관련 단어</h3><p>${card.relatedWords}</p>` : ''}
+                        ${card.tips ? `<h3>💡 팁 & 기억법</h3><p>${card.tips}</p>` : ''}
+                        ${categoryBadges ? `<div style="margin-top: 20px;">${categoryBadges}</div>` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 }
