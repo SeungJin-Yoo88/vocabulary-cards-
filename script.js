@@ -1,5 +1,6 @@
 // 카드 데이터 저장소
 let cards = [];
+let trashedCards = []; // 휴지통 (삭제된 카드들)
 let categories = [];
 let currentFilter = 'all';
 let selectedCategories = [];
@@ -39,6 +40,9 @@ const settingsBtn = document.getElementById('settingsBtn');
 const settingsModal = document.getElementById('settingsModal');
 const closeSettingsModal = document.getElementById('closeSettingsModal');
 const themeToggle = document.getElementById('themeToggle');
+const trashBtn = document.getElementById('trashBtn');
+const trashModal = document.getElementById('trashModal');
+const closeTrashModal = document.getElementById('closeTrashModal');
 
 // 초기화
 document.addEventListener('DOMContentLoaded', async () => {
@@ -46,6 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadTheme();
     loadCategories();
     loadStats();
+    loadTrashedCards(); // 휴지통 로드
     await loadCards();
     initializeCardStates();
     renderCategories();
@@ -69,6 +74,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     settingsBtn.addEventListener('click', openSettingsModal);
     closeSettingsModal.addEventListener('click', closeSettingsModalFn);
     themeToggle.addEventListener('click', toggleTheme);
+    trashBtn.addEventListener('click', openTrashModal);
+    closeTrashModal.addEventListener('click', closeTrashModalFn);
 
     filterBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -95,6 +102,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     settingsModal.addEventListener('click', (e) => {
         if (e.target === settingsModal) {
             closeSettingsModalFn();
+        }
+    });
+
+    trashModal.addEventListener('click', (e) => {
+        if (e.target === trashModal) {
+            closeTrashModalFn();
         }
     });
 
@@ -188,6 +201,19 @@ function loadCategories() {
 // 카테고리 저장
 function saveCategories() {
     localStorage.setItem('vocabularyCategories', JSON.stringify(categories));
+}
+
+// 휴지통 로드
+function loadTrashedCards() {
+    const stored = localStorage.getItem('trashedCards');
+    if (stored) {
+        trashedCards = JSON.parse(stored);
+    }
+}
+
+// 휴지통 저장
+function saveTrashedCards() {
+    localStorage.setItem('trashedCards', JSON.stringify(trashedCards));
 }
 
 // 샘플 카드 추가 함수 제거됨 (cards.json에 기본 카드 존재)
@@ -823,15 +849,119 @@ function toggleFavorite(id) {
     }
 }
 
-// 카드 삭제
+// 카드 삭제 (휴지통으로 이동)
 function deleteCard(id) {
-    if (confirm('정말로 이 카드를 삭제하시겠습니까?')) {
-        cards = cards.filter(c => c.id !== id);
-        saveDeletedCardId(id); // 삭제된 카드 ID 저장
+    if (confirm('카드를 휴지통으로 이동하시겠습니까?')) {
+        const card = cards.find(c => c.id === id);
+        if (card) {
+            // 휴지통으로 이동
+            trashedCards.push(card);
+            cards = cards.filter(c => c.id !== id);
+
+            saveTrashedCards();
+            saveCards();
+            renderCards();
+            updateStats();
+            showNotification('🗑️ 카드가 휴지통으로 이동되었습니다.');
+        }
+    }
+}
+
+// 휴지통 모달 열기
+function openTrashModal() {
+    trashModal.classList.remove('hidden');
+    renderTrashCards();
+}
+
+// 휴지통 모달 닫기
+function closeTrashModalFn() {
+    trashModal.classList.add('hidden');
+}
+
+// 휴지통 카드 렌더링
+function renderTrashCards() {
+    const trashList = document.getElementById('trashList');
+
+    if (trashedCards.length === 0) {
+        trashList.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">휴지통이 비어있습니다.</p>';
+        return;
+    }
+
+    trashList.innerHTML = '';
+
+    trashedCards.forEach(card => {
+        const item = document.createElement('div');
+        item.className = 'trash-item';
+        item.style.cssText = `
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+        `;
+
+        item.innerHTML = `
+            <div>
+                <strong style="font-size: 1.1rem; color: #333;">${card.word}</strong>
+                <p style="color: #666; margin: 5px 0 0 0; font-size: 0.9rem;">${card.meaning.substring(0, 50)}...</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="restoreCard(${card.id})" style="
+                    padding: 8px 16px;
+                    background: #51cf66;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-weight: 600;
+                ">♻️ 복구</button>
+                <button onclick="permanentlyDeleteCard(${card.id})" style="
+                    padding: 8px 16px;
+                    background: #ff6b6b;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-weight: 600;
+                ">❌ 영구 삭제</button>
+            </div>
+        `;
+
+        trashList.appendChild(item);
+    });
+}
+
+// 카드 복구
+function restoreCard(id) {
+    const card = trashedCards.find(c => c.id === id);
+    if (card) {
+        // 복구
+        cards.push(card);
+        trashedCards = trashedCards.filter(c => c.id !== id);
+
         saveCards();
+        saveTrashedCards();
         renderCards();
+        renderTrashCards();
         updateStats();
-        showNotification('🗑️ 카드가 삭제되었습니다.');
+        showNotification('♻️ 카드가 복구되었습니다.');
+    }
+}
+
+// 영구 삭제
+function permanentlyDeleteCard(id) {
+    if (confirm('정말로 영구 삭제하시겠습니까? 복구할 수 없습니다!')) {
+        // 휴지통에서 제거
+        trashedCards = trashedCards.filter(c => c.id !== id);
+
+        // 영구 삭제 ID에 추가
+        saveDeletedCardId(id);
+        saveTrashedCards();
+        renderTrashCards();
+        showNotification('❌ 카드가 영구 삭제되었습니다.');
     }
 }
 

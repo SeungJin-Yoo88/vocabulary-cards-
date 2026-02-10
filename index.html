@@ -50,6 +50,7 @@
             <!-- Action Buttons -->
             <div class="action-buttons">
                 <button id="manageCategoriesBtn" class="manage-categories-btn">🏷️ 카테고리</button>
+                <button id="trashBtn" class="trash-btn">🗑️ 휴지통</button>
                 <button id="settingsBtn" class="settings-btn">⚙️ 설정</button>
                 <button id="reviewModeBtn" class="review-btn">🎯 복습 모드</button>
                 <button id="addCardBtn" class="add-btn">➕ 새 카드</button>
@@ -254,6 +255,23 @@
                     <button onclick="addCategory()" class="submit-btn" style="white-space: nowrap;">추가</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Trash Modal (휴지통) -->
+    <div id="trashModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🗑️ 휴지통</h2>
+                <button class="close-btn" id="closeTrashModal">&times;</button>
+            </div>
+            <div style="margin-bottom: 15px; padding: 12px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                <p style="margin: 0; color: #856404; font-size: 0.9rem;">
+                    💡 <strong>휴지통 안내:</strong> 삭제된 카드는 여기에 임시 보관됩니다.
+                    복구하거나 영구 삭제할 수 있습니다.
+                </p>
+            </div>
+            <div id="trashList" style="max-height: 400px; overflow-y: auto;"></div>
         </div>
     </div>
 
