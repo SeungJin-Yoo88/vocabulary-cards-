@@ -564,6 +564,11 @@ header h1 {
     overflow-y: auto;
     color: var(--text-primary);
     transition: background 0.3s ease;
+    padding: 30px !important;
+}
+
+.flashcard-back .card-content {
+    margin-top: 20px;
 }
 
 .card-actions {
@@ -657,21 +662,53 @@ header h1 {
 
 .card-content h3 {
     color: #667eea;
-    margin-top: 18px;
-    margin-bottom: 10px;
-    font-size: 1.15rem;
-    font-weight: 600;
+    margin-top: 20px;
+    margin-bottom: 12px;
+    font-size: 1.2rem;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.card-content h3:first-of-type {
+    margin-top: 0;
 }
 
 .card-content p {
-    line-height: 1.75;
+    line-height: 1.8;
     color: var(--text-primary);
-    margin-bottom: 12px;
-    font-size: 1.02rem;
+    margin-bottom: 16px;
+    font-size: 1.03rem;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: rgba(102, 126, 234, 0.03);
+    padding: 14px 16px;
+    border-radius: 10px;
+    border-left: 3px solid rgba(102, 126, 234, 0.3);
+}
+
+.card-content p:empty {
+    display: none;
+}
+
+/* 예문 스타일 개선 */
+.card-content h3:nth-of-type(2) + p {
+    background: rgba(255, 193, 7, 0.05);
+    border-left-color: rgba(255, 193, 7, 0.5);
+}
+
+/* 관련 단어 스타일 */
+.card-content h3:nth-of-type(3) + p {
+    background: rgba(76, 175, 80, 0.05);
+    border-left-color: rgba(76, 175, 80, 0.5);
+}
+
+/* 팁 스타일 */
+.card-content h3:nth-of-type(4) + p {
+    background: rgba(156, 39, 176, 0.05);
+    border-left-color: rgba(156, 39, 176, 0.5);
 }
 
 /* Review Mode */
