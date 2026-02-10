@@ -231,7 +231,7 @@ function closeModalFn() {
     addCardForm.reset();
 }
 
-// AI 자동 생성
+// AI 자동 생성 (Claude Code 스킬 활용)
 async function handleAIGenerate() {
     const wordInput = document.getElementById('wordInput');
     const word = wordInput.value.trim();
@@ -242,44 +242,66 @@ async function handleAIGenerate() {
         return;
     }
 
-    // 버튼 비활성화 및 로딩 상태
-    aiGenerateBtn.disabled = true;
-    aiGenerateBtn.textContent = '⏳ 생성 중...';
-    aiGenerateBtn.style.opacity = '0.6';
+    // Claude Code 명령어 생성
+    const command = `/vocab-card ${word}`;
 
+    // 클립보드에 복사
     try {
-        const response = await fetch('/api/generate-card', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ word })
-        });
+        await navigator.clipboard.writeText(command);
 
-        const data = await response.json();
+        // 안내 모달 표시
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            z-index: 10000;
+            max-width: 500px;
+            text-align: center;
+        `;
 
-        if (!response.ok) {
-            throw new Error(data.error || 'AI 생성 중 오류가 발생했습니다.');
-        }
+        modal.innerHTML = `
+            <div style="font-size: 3rem; margin-bottom: 15px;">🤖</div>
+            <h3 style="margin: 0 0 15px 0; color: #212529;">Claude Code에서 실행하세요!</h3>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0; font-family: monospace; font-size: 1.1rem; color: #495057;">
+                ${command}
+            </div>
+            <p style="color: #868e96; margin: 15px 0; line-height: 1.6;">
+                ✅ 명령어가 클립보드에 복사되었습니다!<br>
+                Claude Code에 붙여넣기(Ctrl+V)하세요.
+            </p>
+            <button onclick="this.parentElement.remove()" style="
+                margin-top: 15px;
+                padding: 12px 30px;
+                background: #667eea;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                font-size: 1rem;
+            ">확인</button>
+        `;
 
-        // 폼 필드 자동 채우기
-        document.getElementById('wordInput').value = data.word || word;
-        document.getElementById('pronunciationInput').value = data.pronunciation || '';
-        document.getElementById('meaningInput').value = data.meaning || '';
-        document.getElementById('exampleInput').value = data.example || (Array.isArray(data.examples) ? data.examples.join('\n\n') : '');
-        document.getElementById('relatedInput').value = data.related || '';
-        document.getElementById('tipsInput').value = data.tips || '';
+        document.body.appendChild(modal);
 
-        showNotification('✅ AI가 카드를 채웠습니다! 내용을 확인하고 수정하세요.');
+        // 5초 후 자동 닫기
+        setTimeout(() => {
+            if (document.body.contains(modal)) {
+                modal.remove();
+            }
+        }, 5000);
+
+        showNotification('📋 명령어가 복사되었습니다!');
 
     } catch (error) {
-        console.error('AI generation error:', error);
-        showNotification('❌ ' + error.message);
-    } finally {
-        // 버튼 복구
-        aiGenerateBtn.disabled = false;
-        aiGenerateBtn.textContent = '✨ AI 채우기';
-        aiGenerateBtn.style.opacity = '1';
+        // 클립보드 복사 실패 시 명령어 표시
+        alert(`다음 명령어를 Claude Code에 복사-붙여넣기 하세요:\n\n${command}`);
     }
 }
 
