@@ -1,0 +1,23 @@
+{
+  "name": "vocabulary-cards",
+  "version": "1.0.0",
+  "description": "나만의 영어 단어장 - AI-powered vocabulary learning app",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "vocabulary",
+    "english",
+    "learning",
+    "flashcards",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT"
+}

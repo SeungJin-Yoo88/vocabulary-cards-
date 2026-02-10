@@ -3,13 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI 기반 스마트 영어 단어 학습 앱 - SRS 알고리즘으로 효율적인 학습">
+    <meta name="theme-color" content="#667eea">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Vocabulary">
     <title>나만의 영어 단어장 📚</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="icon-192.svg">
+    <link rel="apple-touch-icon" href="icon-192.svg">
+
+    <!-- Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <!-- Header -->
         <header>
+            <button id="themeToggle" class="theme-toggle" title="다크모드 전환">🌙</button>
             <h1>📚 나만의 영어 단어장</h1>
             <p class="subtitle">플래시카드로 영어 단어를 마스터하세요!</p>
         </header>
@@ -24,15 +40,59 @@
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all">전체</button>
                 <button class="filter-btn" data-filter="favorites">⭐ 즐겨찾기</button>
+                <button class="filter-btn" data-filter="due">📅 오늘 복습</button>
+                <div id="categoryFilters" class="category-filters"></div>
+                <button id="manageCategoriesBtn" class="manage-categories-btn">🏷️ 카테고리 관리</button>
+                <button id="settingsBtn" class="settings-btn">⚙️ 설정</button>
                 <button id="reviewModeBtn" class="review-btn">🎯 복습 모드</button>
                 <button id="addCardBtn" class="add-btn">➕ 새 카드</button>
             </div>
         </div>
 
-        <!-- Stats -->
-        <div class="stats">
-            <span>전체 카드: <strong id="totalCards">0</strong></span>
-            <span>즐겨찾기: <strong id="favoriteCards">0</strong></span>
+        <!-- Stats Dashboard -->
+        <div class="stats-dashboard">
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-info">
+                    <div class="stat-label">전체 단어</div>
+                    <div class="stat-number" id="totalCards">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-info">
+                    <div class="stat-label">복습 완료</div>
+                    <div class="stat-number" id="reviewedCards">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-info">
+                    <div class="stat-label">마스터</div>
+                    <div class="stat-number" id="masteredCards">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-info">
+                    <div class="stat-label">오늘 복습</div>
+                    <div class="stat-number" id="dueCards">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-info">
+                    <div class="stat-label">연속 학습</div>
+                    <div class="stat-number" id="streakDays">0일</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-info">
+                    <div class="stat-label">즐겨찾기</div>
+                    <div class="stat-number" id="favoriteCards">0</div>
+                </div>
+            </div>
         </div>
 
         <!-- Review Mode -->
@@ -45,9 +105,18 @@
                 <span id="reviewProgress">1 / 10</span>
             </div>
             <div id="reviewCardContainer"></div>
+            <div class="review-rating">
+                <p>이 단어를 기억하는 게 얼마나 어려웠나요?</p>
+                <div class="rating-buttons">
+                    <button class="rating-btn" data-rating="1">❌ 못 외웠음 (1일 후)</button>
+                    <button class="rating-btn" data-rating="3">😅 어려움 (3일 후)</button>
+                    <button class="rating-btn" data-rating="4">😊 보통 (7일 후)</button>
+                    <button class="rating-btn" data-rating="5">✅ 쉬움 (14일 후)</button>
+                </div>
+            </div>
             <div class="review-controls">
                 <button id="prevCardBtn">← 이전</button>
-                <button id="nextCardBtn">다음 →</button>
+                <button id="nextCardBtn">다음 (평가 안함) →</button>
                 <button id="shuffleBtn">🔀 섞기</button>
             </div>
         </div>
@@ -71,8 +140,16 @@
             </div>
             <form id="addCardForm">
                 <div class="form-group">
-                    <label>영어 단어 *</label>
-                    <input type="text" id="wordInput" required placeholder="예: conspiracy theory">
+                    <label>영어 단어 또는 한글 단어 *</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="wordInput" required placeholder="예: conspiracy theory 또는 음모론">
+                        <button type="button" id="aiGenerateBtn" class="ai-btn" title="AI가 자동으로 카드 내용을 채워줍니다">
+                            ✨ AI 채우기
+                        </button>
+                    </div>
+                    <small style="color: #666; font-size: 0.85rem; margin-top: 5px; display: block;">
+                        💡 팁: 단어만 입력하고 AI 채우기 버튼을 누르면 모든 정보가 자동으로 생성됩니다!
+                    </small>
                 </div>
                 <div class="form-group">
                     <label>발음</label>
@@ -94,6 +171,10 @@
                     <label>팁 & 기억법</label>
                     <textarea id="tipsInput" placeholder="어원, 기억법, 사용 팁 등"></textarea>
                 </div>
+                <div class="form-group">
+                    <label>카테고리 (복수 선택 가능)</label>
+                    <div id="categoryCheckboxes" class="category-checkboxes"></div>
+                </div>
                 <div class="form-actions">
                     <button type="button" class="cancel-btn" id="cancelBtn">취소</button>
                     <button type="submit" class="submit-btn">카드 추가</button>
@@ -102,6 +183,74 @@
         </div>
     </div>
 
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>설정</h2>
+                <button class="close-btn" id="closeSettingsModal">&times;</button>
+            </div>
+            <div class="settings-section">
+                <h3>데이터 백업 및 복원</h3>
+                <div class="settings-buttons">
+                    <button onclick="exportCards()" class="settings-action-btn">
+                        📤 카드 내보내기 (JSON)
+                    </button>
+                    <button onclick="document.getElementById('importFileInput').click()" class="settings-action-btn">
+                        📥 카드 가져오기 (JSON)
+                    </button>
+                    <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="importCards(event)">
+                </div>
+                <p style="color: #666; font-size: 0.9rem; margin-top: 10px;">
+                    💡 모든 카드, 카테고리, 학습 통계를 JSON 파일로 백업하거나 복원할 수 있습니다.
+                </p>
+            </div>
+            <div class="settings-section">
+                <h3>데이터 초기화</h3>
+                <button onclick="resetAllData()" class="settings-danger-btn">
+                    🗑️ 모든 데이터 삭제
+                </button>
+                <p style="color: #ff6b6b; font-size: 0.9rem; margin-top: 10px;">
+                    ⚠️ 이 작업은 되돌릴 수 없습니다. 먼저 데이터를 백업하세요.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Management Modal -->
+    <div id="categoryModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>카테고리 관리</h2>
+                <button class="close-btn" id="closeCategoryModal">&times;</button>
+            </div>
+            <div class="category-list" id="categoryList"></div>
+            <div class="add-category-form">
+                <h3>새 카테고리 추가</h3>
+                <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                    <input type="text" id="newCategoryName" placeholder="카테고리 이름" style="flex: 1;">
+                    <select id="newCategoryIcon" style="padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                        <option value="💼">💼 비즈니스</option>
+                        <option value="💬">💬 일상</option>
+                        <option value="📚">📚 학술</option>
+                        <option value="🏥">🏥 의학</option>
+                        <option value="⚖️">⚖️ 법률</option>
+                        <option value="💻">💻 IT</option>
+                        <option value="🎨">🎨 예술</option>
+                        <option value="🔬">🔬 과학</option>
+                        <option value="🏃">🏃 스포츠</option>
+                        <option value="🍳">🍳 요리</option>
+                        <option value="✈️">✈️ 여행</option>
+                        <option value="📰">📰 뉴스</option>
+                    </select>
+                    <input type="color" id="newCategoryColor" value="#667eea" style="width: 50px; height: 42px; border: none; border-radius: 8px;">
+                    <button onclick="addCategory()" class="submit-btn" style="white-space: nowrap;">추가</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/srs-engine.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
