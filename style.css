@@ -362,8 +362,8 @@ header h1 {
 /* Stats Dashboard */
 .stats-dashboard {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);  /* 3열로 고정 */
-    gap: 20px;
+    grid-template-columns: repeat(6, 1fr);  /* 1열에 6개 배치 */
+    gap: 15px;
     margin-bottom: 30px;
 }
 
@@ -854,7 +854,7 @@ header h1 {
 /* Responsive */
 @media (max-width: 1024px) {
     .stats-dashboard {
-        grid-template-columns: repeat(2, 1fr);  /* 태블릿: 2열 */
+        grid-template-columns: repeat(3, 1fr);  /* 태블릿: 3개씩 2줄 */
     }
 }
 
