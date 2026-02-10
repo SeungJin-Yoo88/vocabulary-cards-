@@ -104,31 +104,44 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// 로컬 스토리지 + cards.json에서 카드 로드
+// 로컬 스토리지 + cards.json에서 카드 로드 (자동 병합)
 async function loadCards() {
-    // localStorage에서 로드 (사용자가 수정한 카드들)
-    const stored = localStorage.getItem('vocabularyCards');
     const deletedIds = getDeletedCardIds();
+    let cardsFromJson = [];
+    let cardsFromStorage = [];
 
-    if (stored) {
-        // localStorage에 데이터가 있으면 그것만 사용 (삭제된 카드 제외)
-        cards = JSON.parse(stored).filter(card => !deletedIds.has(card.id));
-    } else {
-        // localStorage가 비어있으면 cards.json에서 초기 데이터 로드
-        try {
-            const response = await fetch('cards.json');
-            if (response.ok) {
-                const allCards = await response.json();
-                // 삭제된 카드 제외하고 로드
-                cards = allCards.filter(card => !deletedIds.has(card.id));
-                // 초기 데이터를 localStorage에 저장
-                saveCards();
-            }
-        } catch (error) {
-            console.log('cards.json을 읽을 수 없습니다. 빈 카드 목록으로 시작합니다.');
-            cards = [];
+    // 1. cards.json에서 기본 카드 로드
+    try {
+        const response = await fetch('cards.json');
+        if (response.ok) {
+            cardsFromJson = await response.json();
         }
+    } catch (error) {
+        console.log('cards.json을 읽을 수 없습니다.');
     }
+
+    // 2. localStorage에서 카드 로드
+    const stored = localStorage.getItem('vocabularyCards');
+    if (stored) {
+        cardsFromStorage = JSON.parse(stored);
+    }
+
+    // 3. 병합: cards.json 카드 + localStorage 고유 카드
+    const jsonCardIds = new Set(cardsFromJson.map(c => c.id));
+    const mergedCards = [...cardsFromJson];
+
+    // localStorage에만 있는 카드 추가 (사용자가 직접 추가한 카드)
+    cardsFromStorage.forEach(card => {
+        if (!jsonCardIds.has(card.id)) {
+            mergedCards.push(card);
+        }
+    });
+
+    // 4. 삭제된 카드 제외
+    cards = mergedCards.filter(card => !deletedIds.has(card.id));
+
+    // 5. 최신 상태 저장
+    saveCards();
 }
 
 // 삭제된 카드 ID 목록 가져오기
